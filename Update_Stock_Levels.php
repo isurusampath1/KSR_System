@@ -1,3 +1,19 @@
+<?php
+global $result;
+$db_hostname = 'localhost';
+$db_username = 'root';
+$db_password = '';
+$db_database = 'inventory';
+
+// Database Connection String
+$con = mysql_connect($db_hostname,$db_username,$db_password);
+if (!$con)
+  {
+  die('Could not connect: ' . mysql_error());
+  }
+
+mysql_select_db($db_database, $con);
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -39,21 +55,20 @@
   </head>
 
   <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
-      <?php
-          $username = "root";
-          $password = "";
-          $host = "localhost";
+  <?php 
+        $username = "root";
+        $password = "";
+        $host = "localhost";
 
-          $connector = mysql_connect($host,$username,$password)
-              or die("Unable to connect");
-            echo "Connections are made successfully::";
-          $selected = mysql_select_db("inventory", $connector)
+        $con = mysql_connect($host,$username,$password)
+          or die("Unable to connect");
+          echo "Connections are made successfully::";
+        $selected = mysql_select_db("inventory", $con)
             or die("Unable to connect");
-
-          //execute the SQL query and return records
-          $result1 = mysql_query("SELECT store_item.item_id,store_item.qty,store_item.critical_level,store_item.description,items.item_name,category.category_name,brand.brand_name,unit.unit_name FROM ((((store_item JOIN items ON items.id = store_item.item_id) JOIN category ON category.id = items.item_catogory) JOIN brand ON brand.id = items.brand_id) JOIN unit ON unit.id = store_item.unit_id) ORDER BY store_item.item_id ASC ");
-          ?>
+        
+  ?>
   <!-- container section start -->
   <section id="container" class="">
      
@@ -82,7 +97,6 @@
                             <i class="fa fa-home"></i>
                             <span class="badge bg-important"></span>
                         </a>
-                        
                     </li>
                     <!-- task notificatoin end -->
                     <!-- inbox notificatoin start-->
@@ -91,7 +105,6 @@
                             <i class="fa fa-print"></i>
                             <span class="badge bg-important"></span>
                         </a>
-                        
                     </li>
                     <!-- inbox notificatoin end -->
                     <!-- alert notification start-->
@@ -101,7 +114,6 @@
                             <i class="fa fa-globe"></i>
                             <span class="badge bg-important"></span>
                         </a>
-                        
                     </li>
                     <!-- alert notification end-->
                     <!-- user login dropdown start-->
@@ -121,7 +133,6 @@
                             <li>
                                 <a href="login1.php"><i class="icon_key_alt"></i> Log Out</a>
                             </li>
-                            
                         </ul>
                     </li>
                     <!-- user login dropdown end -->
@@ -213,11 +224,11 @@
               <!--overview start-->
 			  <div class="row">
 				<div class="col-lg-12">
-					<h3 class="page-header"><i class="fa fa-home"></i> View Stock Data</h3>
+					<h3 class="page-header"><i class="fa fa-home"></i> Update Stock Levels</h3>
 					<ol class="breadcrumb">
 						<li><i class="fa fa-home"></i><a href="index.php">Home</a></li>
                         <li><i class="fa fa-table"></i>Stock</li>
-                        <li><i class="fa fa-th-list"></i>View Stock Data</li>
+                        <li><i class="fa fa-th-list"></i>Update Stock Levels</li>
 												  	
 					</ol>
 				</div>
@@ -233,8 +244,12 @@
 			
 
 				</div><!--/col-->
+        <div>
+            <!--empty space-->
+            <br>
+        </div>
 
-            <div class="row">
+        <div class="row">
                 <div class="col-sm-6">
                     
                         <div class="nav search-row" id="top_menu">
@@ -243,6 +258,7 @@
                                 <li>
                                     <form class="navbar-form">
                                         <input class="form-control" placeholder="Search" type="text" name="term">
+
                                     </form>
                                 </li>                    
                             </ul>
@@ -251,124 +267,125 @@
                         
                 </div>
             
-                <div class="col-lg-2">
-                    <a class="btn btn-primary" href="" title="Search Inventory">Search</a>
-                </div>
-            </div>
+                
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    
 
+                
+            </div>
             <?php
                     if (!empty($_REQUEST['term'])) {
 
                     $term = mysql_real_escape_string($_REQUEST['term']);     
 
-                    $result2 = mysql_query("SELECT store_item.item_id,store_item.qty,store_item.critical_level,store_item.description,items.item_name,category.category_name,brand.brand_name,unit.unit_name FROM ((((store_item JOIN items ON items.id = store_item.item_id) JOIN category ON category.id = items.item_catogory) JOIN brand ON brand.id = items.brand_id) JOIN unit ON unit.id = store_item.unit_id) WHERE items.item_name LIKE '%$term%' ORDER BY store_item.item_id ASC"); 
-                      
+                    $sql = "SELECT store_item.item_id,items.item_name,store_item.qty FROM store_item JOIN items ON items.id = store_item.item_id WHERE items.item_name LIKE '%$term%'"; 
+                     $result = mysql_query($sql); 
                        }
                 ?>
-
-
-			<div>
-
-                <!--some empty space-->
-                <br>
-                <br>
-
-            </div>
-
-            <div class="col-lg-12">
+            
+            <div class="row">
+                  <div class="col-lg-8">
                       <section class="panel">
                           <header class="panel-heading">
-                              Store View
+                              Selected Item
                           </header>
-                          <table class="table table-hover">
-                              <thead>
+                          
+                          <table class="table table-striped table-advance table-hover" id="table1">
+                           <thead>
                               <tr>
-                                  <th>Item Code</th>
-                                  <th>Product Title</th>
-                                  <th>Brand</th>
-                                  <th>Category</th>
-                                  <th>Unit</th>
-                                  <th>Quantity</th>
-                                  <th>Critical Level</th>
-                                  <th>Description</th>
-                                  
+                                 <th><i class=""></i> Item ID</th>
+                                 <th><i class=""></i> Item Name</th>
+                                 <th><i class=""></i> Currunt Quantity</th>
+                                 <th>
+                                  <div class="btn-group">
+                                      <a class="btn btn-primary" href="#"><i class="icon_plus_alt2"></i></a>
+                                  </div>
+                                  </th>
                               </tr>
                               </thead>
                               <tbody>
-                                    <?php
-                                    if (empty($result2)){
-                                      while( $row = mysql_fetch_assoc( $result1 ) ){
-                                        echo
-                                        "<tr>
-                                          <td>{$row['item_id']}</td>
-                                          <td>{$row['item_name']}</td>
-                                          <td>{$row['brand_name']}</td>
-                                          <td>{$row['category_name']}</td>
-                                          <td>{$row['unit_name']}</td>
-                                          <td>{$row['qty']}</td>
-                                          <td>{$row['critical_level']}</td>
-                                          <td>{$row['description']}</td>
-                                           
-                                        </tr>\n";
-                                      }
-                                    }else{
-                                      while( $row = mysql_fetch_assoc( $result2 ) ){
-                                        echo
-                                        "<tr>
-                                          <td>{$row['item_id']}</td>
-                                          <td>{$row['item_name']}</td>
-                                          <td>{$row['brand_name']}</td>
-                                          <td>{$row['category_name']}</td>
-                                          <td>{$row['unit_name']}</td>
-                                          <td>{$row['qty']}</td>
-                                          <td>{$row['critical_level']}</td>
-                                          <td>{$row['description']}</td>
-                                           
-                                        </tr>\n";
 
-                                    }
-                                  }
-                                    ?>
+                              <?php
+                              if( !empty($result))
+                                while ($row = mysql_fetch_assoc($result)){  
+                                    echo 
+                                    "<tr>
+                                        <td>{$row['item_id']}</td>  
+                                        <td>{$row['item_name']}</td>  
+                                        <td>{$row['qty']} </td>
+                                        </tr>\n";
+                                      }  
+                                  ?>
+
                               
-                              </tbody>
-                          </table>
-                          <?php mysql_close($connector); ?>
+                                                            
+                           </tbody>
+                        </table>
                       </section>
                   </div>
-                   
-              
-            
+              </div>
+
+              <div class="row">
+                  <div class="col-lg-8">
+                      <section class="panel">
+                          <header class="panel-heading">
+                              Selected Item
+                          </header>
+                          
+                          <table class="table table-striped table-advance table-hover" id="table2">
+                           <thead>
+                              <tr>
+                                 <th><i class=""></i> Item ID</th>
+                                 <th><i class=""></i> Item Name</th>
+                                 <th><i class=""></i> Currunt Quantity</th>
+                                 
+                              </tr>
+                              </thead>
+                              <tbody>
+                       
+                           </tbody>
+                        </table>
+                        <script type="text/javascript">
+                              $(document).ready(function() {
+                                  var items = [];
+
+                                  $("#table1 tr").on("click", function() {
+                                    var newTr = $(this).closest("tr").clone();
+
+                                    var newButtonHTML = "";
+                                    $(newButtonHTML).children("button").click(function(e) {
+                                    });
+
+                                    $(newTr).children("td:last").html("").html(newButtonHTML);
+                                    items.push(newTr);
+                                    newTr.appendTo($("#table2"));
+
+                                  });
+                          })
+                          </script>
+
+                      </section>
+                  </div>
+              </div>
 				
 
-            
+                    
 
-                  
-		
-		
-			
-			
-
-          </section>
-        <!-- ______________________________________________________Unwanted Space___________________________________________ -->
-
-
-          <div class="text-right">
-          <div class="credits">
-                <a href="https://bootstrapmade.com/free-business-bootstrap-themes-website-templates/"></a> <a href="https://bootstrapmade.com/"></a>
-            </div>
-        </div>
-
-        <!--____________________________________________________END of Unwanted Space________________________________________-->
 
       </section>
       <!--main content end-->
   </section>
   <!-- container section start -->
-    
-    <!-- javascripts -->
 
+  <!-- mine -->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+
+    <!-- javascripts -->
     <script src="js/jquery.js"></script>
-	  <script src="js/jquery-ui-1.10.4.min.js"></script>
+	<script src="js/jquery-ui-1.10.4.min.js"></script>
     <script src="js/jquery-1.8.3.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.9.2.custom.min.js"></script>
     <!-- bootstrap -->
@@ -383,30 +400,30 @@
     <script src="js/owl.carousel.js" ></script>
     <!-- jQuery full calendar -->
     <<script src="js/fullcalendar.min.js"></script> <!-- Full Google Calendar - Calendar -->
-	  <script src="assets/fullcalendar/fullcalendar/fullcalendar.js"></script>
+	<script src="assets/fullcalendar/fullcalendar/fullcalendar.js"></script>
     <!--script for this page only-->
     <script src="js/calendar-custom.js"></script>
-	  <script src="js/jquery.rateit.min.js"></script>
+	<script src="js/jquery.rateit.min.js"></script>
     <!-- custom select -->
     <script src="js/jquery.customSelect.min.js" ></script>
-	  <script src="assets/chart-master/Chart.js"></script>
+	<script src="assets/chart-master/Chart.js"></script>
    
     <!--custome script for all page-->
     <script src="js/scripts.js"></script>
     <!-- custom script for this page-->
     <script src="js/sparkline-chart.js"></script>
     <script src="js/easy-pie-chart.js"></script>
-	  <script src="js/jquery-jvectormap-1.2.2.min.js"></script>
-	  <script src="js/jquery-jvectormap-world-mill-en.js"></script>
-  	<script src="js/xcharts.min.js"></script>
-  	<script src="js/jquery.autosize.min.js"></script>
-  	<script src="js/jquery.placeholder.min.js"></script>
-  	<script src="js/gdp-data.js"></script>	
-  	<script src="js/morris.min.js"></script>
-  	<script src="js/sparklines.js"></script>	
-  	<script src="js/charts.js"></script>
-  	<script src="js/jquery.slimscroll.min.js"></script>
-    <script>
+	<script src="js/jquery-jvectormap-1.2.2.min.js"></script>
+	<script src="js/jquery-jvectormap-world-mill-en.js"></script>
+	<script src="js/xcharts.min.js"></script>
+	<script src="js/jquery.autosize.min.js"></script>
+	<script src="js/jquery.placeholder.min.js"></script>
+	<script src="js/gdp-data.js"></script>	
+	<script src="js/morris.min.js"></script>
+	<script src="js/sparklines.js"></script>	
+	<script src="js/charts.js"></script>
+	<script src="js/jquery.slimscroll.min.js"></script>
+  <script>
 
       //knob
       $(function() {

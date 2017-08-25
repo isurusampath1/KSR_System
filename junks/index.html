@@ -39,21 +39,6 @@
   </head>
 
   <body>
-
-      <?php
-          $username = "root";
-          $password = "";
-          $host = "localhost";
-
-          $connector = mysql_connect($host,$username,$password)
-              or die("Unable to connect");
-            echo "Connections are made successfully::";
-          $selected = mysql_select_db("inventory", $connector)
-            or die("Unable to connect");
-
-          //execute the SQL query and return records
-          $result1 = mysql_query("SELECT store_item.item_id,store_item.qty,store_item.critical_level,store_item.description,items.item_name,category.category_name,brand.brand_name,unit.unit_name FROM ((((store_item JOIN items ON items.id = store_item.item_id) JOIN category ON category.id = items.item_catogory) JOIN brand ON brand.id = items.brand_id) JOIN unit ON unit.id = store_item.unit_id) ORDER BY store_item.item_id ASC ");
-          ?>
   <!-- container section start -->
   <section id="container" class="">
      
@@ -110,7 +95,7 @@
                             <span class="profile-ava">
                                 <img alt="" src="img/k.jpg" style="width:40px;height:40px;">
                             </span>
-                            <span class="username">Store Manager</span>
+                            <span class="username">Kavinda Seasath</span>
                             <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu extended logout">
@@ -119,9 +104,8 @@
                                 <a href="#"><i class="icon_profile"></i> My Profile</a>
                             </li>
                             <li>
-                                <a href="login1.php"><i class="icon_key_alt"></i> Log Out</a>
+                                <a href="login.php"><i class="icon_key_alt"></i> Log Out</a>
                             </li>
-                            
                         </ul>
                     </li>
                     <!-- user login dropdown end -->
@@ -168,7 +152,7 @@
                           <span class="menu-arrow arrow_carrot-right"></span>
                       </a>
                       <ul class="sub">
-                          <li><a class="" href="Accept-Requests.php">Accept Requests</a></li>                          
+                          <li><a class="" href="">Accept Requests</a></li>                          
                           <li><a class="" href="">View Requests</a></li>
                       </ul>
                   </li> 
@@ -213,11 +197,9 @@
               <!--overview start-->
 			  <div class="row">
 				<div class="col-lg-12">
-					<h3 class="page-header"><i class="fa fa-home"></i> View Stock Data</h3>
+					<h3 class="page-header"><i class="fa fa-home"></i> Home</h3>
 					<ol class="breadcrumb">
 						<li><i class="fa fa-home"></i><a href="index.php">Home</a></li>
-                        <li><i class="fa fa-table"></i>Stock</li>
-                        <li><i class="fa fa-th-list"></i>View Stock Data</li>
 												  	
 					</ol>
 				</div>
@@ -233,108 +215,9 @@
 			
 
 				</div><!--/col-->
+				
 
-            <div class="row">
-                <div class="col-sm-6">
                     
-                        <div class="nav search-row" id="top_menu">
-                            <!--  search form start -->
-                            <ul class="nav top-menu">                    
-                                <li>
-                                    <form class="navbar-form">
-                                        <input class="form-control" placeholder="Search" type="text" name="term">
-                                    </form>
-                                </li>                    
-                            </ul>
-                            <!--  search form end -->                
-                        </div>
-                        
-                </div>
-            
-                <div class="col-lg-2">
-                    <a class="btn btn-primary" href="" title="Search Inventory">Search</a>
-                </div>
-            </div>
-
-            <?php
-                    if (!empty($_REQUEST['term'])) {
-
-                    $term = mysql_real_escape_string($_REQUEST['term']);     
-
-                    $result2 = mysql_query("SELECT store_item.item_id,store_item.qty,store_item.critical_level,store_item.description,items.item_name,category.category_name,brand.brand_name,unit.unit_name FROM ((((store_item JOIN items ON items.id = store_item.item_id) JOIN category ON category.id = items.item_catogory) JOIN brand ON brand.id = items.brand_id) JOIN unit ON unit.id = store_item.unit_id) WHERE items.item_name LIKE '%$term%' ORDER BY store_item.item_id ASC"); 
-                      
-                       }
-                ?>
-
-
-			<div>
-
-                <!--some empty space-->
-                <br>
-                <br>
-
-            </div>
-
-            <div class="col-lg-12">
-                      <section class="panel">
-                          <header class="panel-heading">
-                              Store View
-                          </header>
-                          <table class="table table-hover">
-                              <thead>
-                              <tr>
-                                  <th>Item Code</th>
-                                  <th>Product Title</th>
-                                  <th>Brand</th>
-                                  <th>Category</th>
-                                  <th>Unit</th>
-                                  <th>Quantity</th>
-                                  <th>Critical Level</th>
-                                  <th>Description</th>
-                                  
-                              </tr>
-                              </thead>
-                              <tbody>
-                                    <?php
-                                    if (empty($result2)){
-                                      while( $row = mysql_fetch_assoc( $result1 ) ){
-                                        echo
-                                        "<tr>
-                                          <td>{$row['item_id']}</td>
-                                          <td>{$row['item_name']}</td>
-                                          <td>{$row['brand_name']}</td>
-                                          <td>{$row['category_name']}</td>
-                                          <td>{$row['unit_name']}</td>
-                                          <td>{$row['qty']}</td>
-                                          <td>{$row['critical_level']}</td>
-                                          <td>{$row['description']}</td>
-                                           
-                                        </tr>\n";
-                                      }
-                                    }else{
-                                      while( $row = mysql_fetch_assoc( $result2 ) ){
-                                        echo
-                                        "<tr>
-                                          <td>{$row['item_id']}</td>
-                                          <td>{$row['item_name']}</td>
-                                          <td>{$row['brand_name']}</td>
-                                          <td>{$row['category_name']}</td>
-                                          <td>{$row['unit_name']}</td>
-                                          <td>{$row['qty']}</td>
-                                          <td>{$row['critical_level']}</td>
-                                          <td>{$row['description']}</td>
-                                           
-                                        </tr>\n";
-
-                                    }
-                                  }
-                                    ?>
-                              
-                              </tbody>
-                          </table>
-                          <?php mysql_close($connector); ?>
-                      </section>
-                  </div>
                    
               
             
@@ -364,11 +247,10 @@
       <!--main content end-->
   </section>
   <!-- container section start -->
-    
-    <!-- javascripts -->
 
+    <!-- javascripts -->
     <script src="js/jquery.js"></script>
-	  <script src="js/jquery-ui-1.10.4.min.js"></script>
+	<script src="js/jquery-ui-1.10.4.min.js"></script>
     <script src="js/jquery-1.8.3.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.9.2.custom.min.js"></script>
     <!-- bootstrap -->
@@ -383,30 +265,30 @@
     <script src="js/owl.carousel.js" ></script>
     <!-- jQuery full calendar -->
     <<script src="js/fullcalendar.min.js"></script> <!-- Full Google Calendar - Calendar -->
-	  <script src="assets/fullcalendar/fullcalendar/fullcalendar.js"></script>
+	<script src="assets/fullcalendar/fullcalendar/fullcalendar.js"></script>
     <!--script for this page only-->
     <script src="js/calendar-custom.js"></script>
-	  <script src="js/jquery.rateit.min.js"></script>
+	<script src="js/jquery.rateit.min.js"></script>
     <!-- custom select -->
     <script src="js/jquery.customSelect.min.js" ></script>
-	  <script src="assets/chart-master/Chart.js"></script>
+	<script src="assets/chart-master/Chart.js"></script>
    
     <!--custome script for all page-->
     <script src="js/scripts.js"></script>
     <!-- custom script for this page-->
     <script src="js/sparkline-chart.js"></script>
     <script src="js/easy-pie-chart.js"></script>
-	  <script src="js/jquery-jvectormap-1.2.2.min.js"></script>
-	  <script src="js/jquery-jvectormap-world-mill-en.js"></script>
-  	<script src="js/xcharts.min.js"></script>
-  	<script src="js/jquery.autosize.min.js"></script>
-  	<script src="js/jquery.placeholder.min.js"></script>
-  	<script src="js/gdp-data.js"></script>	
-  	<script src="js/morris.min.js"></script>
-  	<script src="js/sparklines.js"></script>	
-  	<script src="js/charts.js"></script>
-  	<script src="js/jquery.slimscroll.min.js"></script>
-    <script>
+	<script src="js/jquery-jvectormap-1.2.2.min.js"></script>
+	<script src="js/jquery-jvectormap-world-mill-en.js"></script>
+	<script src="js/xcharts.min.js"></script>
+	<script src="js/jquery.autosize.min.js"></script>
+	<script src="js/jquery.placeholder.min.js"></script>
+	<script src="js/gdp-data.js"></script>	
+	<script src="js/morris.min.js"></script>
+	<script src="js/sparklines.js"></script>	
+	<script src="js/charts.js"></script>
+	<script src="js/jquery.slimscroll.min.js"></script>
+  <script>
 
       //knob
       $(function() {
